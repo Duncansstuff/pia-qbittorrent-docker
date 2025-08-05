@@ -1,5 +1,18 @@
 #!/bin/sh
 
+# Add option to randomly choose region on container restart
+# eg..  docker run -e REGION="us_california,de_berlin,ca_toronto"
+set -e
+echo "Starting PIA qBittorrent container..."
+
+# Random REGION selection if multiple are provided
+if [[ "$REGION" == *","* ]]; then
+  IFS=',' read -ra REGION_LIST <<< "$REGION"
+  RANDOM_INDEX=$(( RANDOM % ${#REGION_LIST[@]} ))
+  REGION=${REGION_LIST[$RANDOM_INDEX]}
+  echo "Randomly selected REGION: $REGION"
+fi
+
 exitOnError(){
   # $1 must be set to $?
   status=$1
